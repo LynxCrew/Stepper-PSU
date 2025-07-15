@@ -1,30 +1,28 @@
-# LynxCrew Stepper-Brake Plugin
+# LynxCrew Stepper-PSU Plugin
 
 ## What does it do:
-This plugin enables a stepper_brake config section in Kalico/Klipper if you are
-using either an Electromagnetic Stepper Brake or a pcb that shorts out the
-phases of your steppers to increase the detent torque.
-If configured, it will enable a defined output pin immediately after drivers are turned on
-(to disengage the brake) and disable it immediately before drivers are turned
-off (to engage the break)
-order of operations still has to be discussed!
+This plugin enables a stepper_psu config section in Kalico/Klipper if you are
+using a relay to disconnect stepper/driver power when not in use.
+If configured, it will enable a defined output pin when a stepper is to be enabled
+and pause the gcode queue for a specified amount of time so the PSU can turn on fully.
+To disable the PSU you need to use a command.
 
 ## Install:
 SSH into you pi and run:
 ```
 cd ~
-wget -O - https://raw.githubusercontent.com/LynxCrew/Stepper-Brake/psu_enable/install.sh | bash
+wget -O - https://raw.githubusercontent.com/LynxCrew/Stepper-PSU/main/install.sh | bash
 ```
 
 then add this to your moonraker.conf:
 ```
-[update_manager stepper-brake]
+[update_manager stepper-psu]
 type: git_repo
 channel: dev
-path: ~/stepper-brake
-origin: https://github.com/LynxCrew/Stepper-Brake.git
+path: ~/stepper-psu
+origin: https://github.com/LynxCrew/Stepper-PSU.git
 managed_services: klipper
-primary_branch: psu_enable
+primary_branch: main
 install_script: install.sh
 ```
 
@@ -32,7 +30,7 @@ install_script: install.sh
 !!This does only work if your drivers have an enable pin as it hooks directly
 into the enable pin code!!
 (on the other hand, drivers without an enable pin are always active and thus
-should not need a brake, if you feel like you still need it, open an issue and
+should not need a psu, if you feel like you still need it, open an issue and
 I will try to implement it)
 just add
 ```
