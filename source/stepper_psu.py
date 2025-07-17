@@ -18,7 +18,7 @@ class StepperBrakeEnablePin:
         gcode.respond_info("TRIGGERED")
         if value:
             self.mcu_pin.set_digital(print_time, value)
-            self.toolhead.dwell(self.wait_time)
+            # self.toolhead.dwell(self.wait_time)
         self.mcu_enable.set_digital(print_time, value)
 
 
@@ -47,11 +47,12 @@ class StepperPSU:
 
     def _handle_connect(self):
         self.toolhead = self.printer.lookup_object("toolhead")
-
-    def _handle_ready(self):
         all_steppers = self.stepper_enable.get_steppers()
         if self.stepper_names is None:
             self.stepper_names = all_steppers
+        logging.info(self.stepper_names)
+
+    def _handle_ready(self):
         logging.info("StepperPSU ready")
         logging.info(self.stepper_names)
         for stepper_name in self.stepper_names:
