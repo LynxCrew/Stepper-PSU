@@ -11,6 +11,7 @@ class StepperBrakeEnablePin:
         self.enable_tracking.motor_enable = self._motor_enable
 
     def _motor_enable(self, print_time):
+        logging.info("Motor enable")
         if not self.stepper_psu.enabled:
             self.mcu_pin.set_digital(print_time, 1)
             self.stepper_psu.enabled = True
