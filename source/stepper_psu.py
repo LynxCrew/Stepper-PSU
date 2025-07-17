@@ -21,7 +21,7 @@ class StepperPSU:
         self.full_name = config.get_name()
         self.name = self.full_name.split()[-1]
         self.printer = config.get_printer()
-        self.toolhead = self.printer.lookup_object("toolhead")
+        self.toolhead = None
         ppins = self.printer.lookup_object("pins")
         self.mcu_pin = ppins.setup_pin("digital_out", config.get("pin"))
         self.stepper_names = config.getlist("stepper", None)
@@ -40,6 +40,7 @@ class StepperPSU:
         )
 
     def _handle_connect(self):
+        self.toolhead = self.printer.lookup_object("toolhead")
         all_steppers = self.stepper_enable.get_steppers()
         if self.stepper_names is None:
             self.stepper_names = all_steppers
@@ -51,9 +52,10 @@ class StepperPSU:
                 self,
             )
 
+    cmd_DISABLE_STEPPER_PSU_help = "Disable the stepper psu"
     def cmd_DISABLE_STEPPER_PSU(self, gcmd):
         systime = self.printer.get_reactor().monotonic()
-        print_time = self.mcu.estimated_print_time(systime)
+        print_time = self.mcu_pin.get_mcu().estimated_print_time(systime)
         self.mcu_pin.set_digital(print_time, 0)
 
 def load_config_prefix(config):
