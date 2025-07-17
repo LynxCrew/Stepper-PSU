@@ -9,13 +9,8 @@ class StepperBrakeEnablePin:
         self.wait_time = stepper_psu.wait_time
         self.mcu_enable = self.enable.mcu_enable
         self.enable.mcu_enable = self
-        gcode = self.stepper_psu.printer.lookup_object("gcode")
-        gcode.respond_info("TRIGGERED")
-        logging.info("MEOW")
 
     def set_digital(self, print_time, value):
-        gcode = self.stepper_psu.printer.lookup_object("gcode")
-        gcode.respond_info("TRIGGERED")
         if value and not self.stepper_psu.enabled:
             self.mcu_pin.set_digital(print_time, value)
             self.stepper_psu.enabled = True
@@ -55,11 +50,8 @@ class StepperPSU:
         all_steppers = self.stepper_enable.get_steppers()
         if self.stepper_names is None:
             self.stepper_names = all_steppers
-        logging.info(self.stepper_names)
 
     def _handle_ready(self):
-        logging.info("StepperPSU ready")
-        logging.info(self.stepper_names)
         for stepper_name in self.stepper_names:
             StepperBrakeEnablePin(
                 self.stepper_enable.lookup_enable(stepper_name).enable,
