@@ -16,10 +16,10 @@ class StepperBrakeEnablePin:
     def set_digital(self, print_time, value):
         gcode = self.stepper_psu.printer.lookup_object("gcode")
         gcode.respond_info("TRIGGERED")
-        if value and not self.stepper_psu.count:
+        if value and not self.stepper_psu.enabled:
             self.mcu_pin.set_digital(print_time, value)
+            self.stepper_psu.enabled = true
             # self.toolhead.dwell(self.wait_time)
-        self.stepper_psu.count += 1
         self.mcu_enable.set_digital(print_time, value)
 
 
@@ -32,13 +32,14 @@ class StepperPSU:
         self.toolhead = None
         ppins = self.printer.lookup_object("pins")
         self.mcu_pin = ppins.setup_pin("digital_out", config.get("pin"))
+        self.mcu_pin.setup_max_duration(0.0)
         self.stepper_names = config.getlist("stepper", None)
         self.wait_time = config.getfloat("wait_time", 0.0, minval=0.0)
         self.stepper_enable = self.printer.load_object(config, "stepper_enable")
         self.printer.register_event_handler("klippy:ready", self._handle_ready)
         self.printer.register_event_handler("klippy:connect", self._handle_connect)
 
-        self.count = 0
+        self.enabled = False
 
         gcode = self.printer.lookup_object("gcode")
         gcode.register_mux_command(
