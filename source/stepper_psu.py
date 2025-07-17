@@ -15,7 +15,7 @@ class StepperBrakeEnablePin:
             self.mcu_pin.set_digital(print_time, value)
             self.stepper_psu.enabled = True
             time.sleep(self.wait_time)
-        self.mcu_enable.set_digital(print_time, value)
+        self.mcu_enable.set_digital(print_time + self.wait_time, value)
 
 
 class StepperPSU:
