@@ -52,6 +52,7 @@ class StepperPSU:
             self.stepper_names = all_steppers
 
     def _handle_ready(self):
+        logging.info("StepperPSU ready")
         logging.info(self.stepper_names)
         for stepper_name in self.stepper_names:
             StepperBrakeEnablePin(
