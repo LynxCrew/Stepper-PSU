@@ -18,7 +18,7 @@ class StepperBrakeEnablePin:
         gcode.respond_info("TRIGGERED")
         if value and not self.stepper_psu.enabled:
             self.mcu_pin.set_digital(print_time, value)
-            self.stepper_psu.enabled = true
+            self.stepper_psu.enabled = True
             # self.toolhead.dwell(self.wait_time)
         self.mcu_enable.set_digital(print_time, value)
 
