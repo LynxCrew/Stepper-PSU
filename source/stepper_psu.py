@@ -16,8 +16,8 @@ class StepperBrakeEnablePin:
     def set_digital(self, print_time, value):
         gcode = self.stepper_brake.printer.lookup_object("gcode")
         gcode.respond_info("TRIGGERED")
-        if value:
-            self.mcu_pin.set_digital(print_time, value)
+        # if value:
+            # self.mcu_pin.set_digital(print_time, value)
             # self.toolhead.dwell(self.wait_time)
         self.mcu_enable.set_digital(print_time, value)
 
