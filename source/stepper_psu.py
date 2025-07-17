@@ -68,9 +68,9 @@ class StepperPSU:
 
     cmd_DISABLE_STEPPER_PSU_help = "Disable the stepper psu"
     def cmd_DISABLE_STEPPER_PSU(self, gcmd):
-        systime = self.printer.get_reactor().monotonic()
-        print_time = self.mcu_pin.get_mcu().estimated_print_time(systime)
-        self.mcu_pin.set_digital(print_time, 0)
+        self.toolhead.register_lookahead_callback(
+            (lambda pt: self.mcu_pin.set_digital(pt, 0))
+        )
 
 def load_config_prefix(config):
     return StepperPSU(config)
