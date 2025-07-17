@@ -1,14 +1,14 @@
 import logging
 
 class StepperBrakeEnablePin:
-    def __init__(self, enable, stepper_psu):
-        self.enable = enable
+    def __init__(self, enable_tracking, stepper_psu):
+        self.enable_tracking = enable_tracking
         self.stepper_psu = stepper_psu
         self.mcu_pin = stepper_psu.mcu_pin
         self.toolhead = stepper_psu.toolhead
         self.wait_time = stepper_psu.wait_time
-        self.motor_enable = self.enable.motor_enable
-        self.enable.motor_enable = self._motor_enable
+        self.original_motor_enable = self.enable_tracking.motor_enable
+        self.enable_tracking.motor_enable = self._motor_enable
 
     def _motor_enable(self, print_time):
         if not self.stepper_psu.enabled:
@@ -16,7 +16,7 @@ class StepperBrakeEnablePin:
             self.stepper_psu.enabled = True
             self.toolhead.wait_moves()
             self.toolhead.dwell(self.wait_time)
-        self.motor_enable(print_time)
+        self.original_motor_enable(print_time)
 
 
 class StepperPSU:
