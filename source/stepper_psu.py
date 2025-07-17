@@ -7,6 +7,8 @@ class StepperBrakeEnablePin:
         self.wait_time = stepper_brake.wait_time
         self.mcu_enable = self.enable.mcu_enable
         self.enable.mcu_enable = self
+        gcode = self.stepper_brake.printer.lookup_object("gcode")
+        gcode.respond_info("TRIGGERED")
 
     def set_digital(self, print_time, value):
         gcode = self.stepper_brake.printer.lookup_object("gcode")
