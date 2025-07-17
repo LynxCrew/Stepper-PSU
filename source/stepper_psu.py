@@ -47,11 +47,11 @@ class StepperPSU:
 
     def _handle_connect(self):
         self.toolhead = self.printer.lookup_object("toolhead")
+
+    def _handle_ready(self):
         all_steppers = self.stepper_enable.get_steppers()
         if self.stepper_names is None:
             self.stepper_names = all_steppers
-
-    def _handle_ready(self):
         logging.info("StepperPSU ready")
         logging.info(self.stepper_names)
         for stepper_name in self.stepper_names:
