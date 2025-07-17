@@ -1,24 +1,25 @@
 import logging
 
 class StepperBrakeEnablePin:
-    def __init__(self, enable, stepper_brake):
+    def __init__(self, enable, stepper_psu):
         self.enable = enable
-        self.stepper_brake = stepper_brake
-        self.mcu_pin = stepper_brake.mcu_pin
-        self.toolhead = stepper_brake.toolhead
-        self.wait_time = stepper_brake.wait_time
+        self.stepper_psu = stepper_psu
+        self.mcu_pin = stepper_psu.mcu_pin
+        self.toolhead = stepper_psu.toolhead
+        self.wait_time = stepper_psu.wait_time
         self.mcu_enable = self.enable.mcu_enable
         self.enable.mcu_enable = self
-        gcode = self.stepper_brake.printer.lookup_object("gcode")
+        gcode = self.stepper_psu.printer.lookup_object("gcode")
         gcode.respond_info("TRIGGERED")
         logging.info("MEOW")
 
     def set_digital(self, print_time, value):
-        gcode = self.stepper_brake.printer.lookup_object("gcode")
+        gcode = self.stepper_psu.printer.lookup_object("gcode")
         gcode.respond_info("TRIGGERED")
-        # if value:
-            # self.mcu_pin.set_digital(print_time, value)
+        if value and not self.stepper_psu.count:
+            self.mcu_pin.set_digital(print_time, value)
             # self.toolhead.dwell(self.wait_time)
+        self.stepper_psu.count += 1
         self.mcu_enable.set_digital(print_time, value)
 
 
@@ -36,6 +37,9 @@ class StepperPSU:
         self.stepper_enable = self.printer.load_object(config, "stepper_enable")
         self.printer.register_event_handler("klippy:ready", self._handle_ready)
         self.printer.register_event_handler("klippy:connect", self._handle_connect)
+
+        self.count = 0
+
         gcode = self.printer.lookup_object("gcode")
         gcode.register_mux_command(
             "DISABLE_STEPPER_PSU",
