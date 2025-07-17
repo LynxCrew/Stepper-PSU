@@ -37,8 +37,6 @@ just add
 [stepper_psu my_stepper_psu]
 pin: 
 #   the pin to be switched when steppers turn on or off
-wait_time: 0.0
-#   The Time to block after enabling steppers so the psu has time to fully turn on
 stepper:
 #   the steppers that should cause the pin to switch.
 #   If this parameter is not specified, the module will listen to all steppers
