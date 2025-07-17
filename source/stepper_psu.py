@@ -6,7 +6,7 @@ class StepperBrakeEnablePin:
         self.stepper_psu = stepper_psu
         self.mcu_pin = stepper_psu.mcu_pin
         self.toolhead = stepper_psu.toolhead
-        self.wait_time = stepper_psu.wait_time
+        # self.wait_time = stepper_psu.wait_time
         self.mcu_enable = self.enable.mcu_enable
         self.enable.mcu_enable = self
 
@@ -14,8 +14,7 @@ class StepperBrakeEnablePin:
         if value and not self.stepper_psu.enabled:
             self.mcu_pin.set_digital(print_time, value)
             self.stepper_psu.enabled = True
-            time.sleep(self.wait_time)
-        self.mcu_enable.set_digital(print_time + self.wait_time, value)
+        self.mcu_enable.set_digital(print_time, value)
 
 
 class StepperPSU:
@@ -29,7 +28,7 @@ class StepperPSU:
         self.mcu_pin = ppins.setup_pin("digital_out", config.get("pin"))
         self.mcu_pin.setup_max_duration(0.0)
         self.stepper_names = config.getlist("stepper", None)
-        self.wait_time = config.getfloat("wait_time", 0.0, minval=0.0)
+        # self.wait_time = config.getfloat("wait_time", 0.0, minval=0.0)
         self.stepper_enable = self.printer.load_object(config, "stepper_enable")
         self.printer.register_event_handler("klippy:ready", self._handle_ready)
         self.printer.register_event_handler("klippy:connect", self._handle_connect)
