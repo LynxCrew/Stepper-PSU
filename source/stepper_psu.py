@@ -15,7 +15,7 @@ class StepperBrakeEnablePin:
         callbacks = []
         for motor_enable in self.enable_tracking.stepper._active_callbacks:
             if motor_enable == self.enable_tracking.motor_enable:
-                callbacks.append(_motor_enable)
+                callbacks.append(self._motor_enable)
             else:
                 callbacks.append(motor_enable)
         self.enable_tracking.stepper._active_callbacks = callbacks
