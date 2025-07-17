@@ -8,7 +8,19 @@ class StepperBrakeEnablePin:
         self.toolhead = stepper_psu.toolhead
         self.wait_time = stepper_psu.wait_time
         self.original_motor_enable = self.enable_tracking.motor_enable
+        self._replace_motor_enable()
         self.enable_tracking.motor_enable = self._motor_enable
+
+    def _replace_motor_enable(self):
+        callbacks = []
+        for motor_enable in self.enable_tracking.stepper._active_callbacks:
+            if motor_enable == self.enable_tracking.motor_enable:
+                callbacks.append(_motor_enable)
+            else:
+                callbacks.append(motor_enable)
+        self.enable_tracking.stepper._active_callbacks = callbacks
+
+
 
     def _motor_enable(self, print_time):
         logging.info("Motor enable")
