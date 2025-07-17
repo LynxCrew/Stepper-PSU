@@ -36,7 +36,6 @@ class StepperPSU:
         self.stepper_enable = self.printer.load_object(config, "stepper_enable")
         self.printer.register_event_handler("klippy:ready", self._handle_ready)
         self.printer.register_event_handler("klippy:connect", self._handle_connect)
-        logging.info("MEOW")
         gcode = self.printer.lookup_object("gcode")
         gcode.register_mux_command(
             "DISABLE_STEPPER_PSU",
@@ -53,6 +52,7 @@ class StepperPSU:
             self.stepper_names = all_steppers
 
     def _handle_ready(self):
+        logging.info(self.stepper_names)
         for stepper_name in self.stepper_names:
             StepperBrakeEnablePin(
                 self.stepper_enable.lookup_enable(stepper_name).enable,
