@@ -1,35 +1,21 @@
-import logging
+import time
 
 class StepperBrakeEnablePin:
-    def __init__(self, enable_tracking, stepper_psu):
-        self.enable_tracking = enable_tracking
+    def __init__(self, enable, stepper_psu):
+        self.enable = enable
         self.stepper_psu = stepper_psu
         self.mcu_pin = stepper_psu.mcu_pin
         self.toolhead = stepper_psu.toolhead
         self.wait_time = stepper_psu.wait_time
-        self.original_motor_enable = self.enable_tracking.motor_enable
-        self._replace_motor_enable()
-        self.enable_tracking.motor_enable = self._motor_enable
+        self.mcu_enable = self.enable.mcu_enable
+        self.enable.mcu_enable = self
 
-    def _replace_motor_enable(self):
-        callbacks = []
-        for motor_enable in self.enable_tracking.stepper._active_callbacks:
-            if motor_enable == self.enable_tracking.motor_enable:
-                callbacks.append(self._motor_enable)
-            else:
-                callbacks.append(motor_enable)
-        self.enable_tracking.stepper._active_callbacks = callbacks
-
-
-
-    def _motor_enable(self, print_time):
-        logging.info("Motor enable")
-        if not self.stepper_psu.enabled:
-            self.mcu_pin.set_digital(print_time, 1)
+    def set_digital(self, print_time, value):
+        if value and not self.stepper_psu.enabled:
+            self.mcu_pin.set_digital(print_time, value)
             self.stepper_psu.enabled = True
-            self.toolhead.wait_moves()
-            self.toolhead.dwell(self.wait_time)
-        self.original_motor_enable(print_time)
+            time.sleep(self.wait_time)
+        self.mcu_enable.set_digital(print_time, value)
 
 
 class StepperPSU:
@@ -68,7 +54,7 @@ class StepperPSU:
     def _handle_ready(self):
         for stepper_name in self.stepper_names:
             StepperBrakeEnablePin(
-                self.stepper_enable.lookup_enable(stepper_name),
+                self.stepper_enable.lookup_enable(stepper_name).enable,
                 self,
             )
 
