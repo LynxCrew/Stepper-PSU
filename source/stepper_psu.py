@@ -1,3 +1,5 @@
+import logging
+
 class StepperBrakeEnablePin:
     def __init__(self, enable, stepper_brake):
         self.enable = enable
@@ -9,6 +11,7 @@ class StepperBrakeEnablePin:
         self.enable.mcu_enable = self
         gcode = self.stepper_brake.printer.lookup_object("gcode")
         gcode.respond_info("TRIGGERED")
+        logging.info("MEOW")
 
     def set_digital(self, print_time, value):
         gcode = self.stepper_brake.printer.lookup_object("gcode")
