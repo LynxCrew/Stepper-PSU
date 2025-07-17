@@ -7,16 +7,16 @@ class StepperBrakeEnablePin:
         self.mcu_pin = stepper_psu.mcu_pin
         self.toolhead = stepper_psu.toolhead
         self.wait_time = stepper_psu.wait_time
-        self.mcu_enable = self.enable.mcu_enable
-        self.enable.mcu_enable = self
+        self.motor_enable = self.enable.motor_enable
+        self.enable.motor_enable = self._motor_enable
 
-    def set_digital(self, print_time, value):
-        if value and not self.stepper_psu.enabled:
-            self.mcu_pin.set_digital(print_time, value)
+    def _motor_enable(self, print_time):
+        if not self.stepper_psu.enabled:
+            self.mcu_pin.set_digital(print_time, 1)
             self.stepper_psu.enabled = True
             self.toolhead.wait_moves()
             self.toolhead.dwell(self.wait_time)
-        self.mcu_enable.set_digital(print_time, value)
+        self.motor_enable(print_time)
 
 
 class StepperPSU:
@@ -55,7 +55,7 @@ class StepperPSU:
     def _handle_ready(self):
         for stepper_name in self.stepper_names:
             StepperBrakeEnablePin(
-                self.stepper_enable.lookup_enable(stepper_name).enable,
+                self.stepper_enable.lookup_enable(stepper_name),
                 self,
             )
 
